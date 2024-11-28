@@ -11,12 +11,14 @@ let gameBoardElement
 const createHeader = title => {
     const titleElement = document.createElement('h1')
     titleElement.textContent = title
+    titleElement.style.justifySelf = 'center'
     document.body.appendChild(titleElement)
 }
 
 const createGameBoardElement = () => {
     gameBoardElement = document.createElement('div')
     gameBoardElement.classList.add('game-board')
+    gameBoardElement.style.justifySelf = 'center'
     return gameBoardElement
 }
 
@@ -66,7 +68,7 @@ const checkBoard = () => {
             gameBoard[position1] === gameBoard[position2] &&
             gameBoard[position1] === gameBoard[position3]
         ){
-            alert(`${gameBoard[position1]}'s wins`)
+            gameCompleteOverlay(`${gameBoard[position1]}'s wins!`)
             return
         }
     }
@@ -74,15 +76,65 @@ const checkBoard = () => {
     const allSquaresUsed = gameBoard.every(square => square !== '')
 
     if(allSquaresUsed) {
-        alert(`It's a draw!`)
+        gameCompleteOverlay(`It's a draw!`)
     }
 }
 
+const gameCompleteOverlay = message => {
+    const overlayElement = document.createElement('div');
+
+    overlayElement.style.backgroundColor = 'rgba(0, 0, 0, 0.6)'
+    overlayElement.style.top = '0'
+    overlayElement.style.left = '0'
+    overlayElement.style.right = '0'
+    overlayElement.style.bottom = '0'
+    overlayElement.style.position = 'fixed'
+    overlayElement.style.display = 'flex'
+    overlayElement.style.flexDirection = 'column'
+    overlayElement.style.justifyContent = 'center'
+    overlayElement.style.alignItems = 'center'
+    overlayElement.style.textAlign = 'center'
+
+    const messageElement = document.createElement('h2')
+    messageElement.textContent = message
+    messageElement.style.color = 'red'
+    messageElement.style.fontSize = '4rem'
+    
+    overlayElement.appendChild(messageElement)
+    
+    const restartButtonElement = document.createElement('button')
+    restartButtonElement.textContent = 'Restart'
+    restartButtonElement.style.padding = '1rem'
+    restartButtonElement.style.backgroundColor = 'transparent'
+    restartButtonElement.style.border = '2px solid red'
+    restartButtonElement.style.fontSize = '1.3rem'
+    restartButtonElement.style.color = 'red'
+    restartButtonElement.style.fontWeight = '600'
+    restartButtonElement.style.cursor = 'pointer'
+
+    restartButtonElement.addEventListener('click', () => {
+        // window.location.reload()
+        document.body.removeChild(overlayElement)
+        resetGame()
+    })
+
+    overlayElement.appendChild(restartButtonElement)
+
+    document.body.appendChild(overlayElement)
+    
+}
+
 const resetGame = () => {
+    if(gameBoardElement) document.body.removeChild(gameBoardElement)
+
     gameBoardElement = createGameBoardElement()
+
     for(let square = 0; square < 9; square++)
         gameBoardElement.appendChild(createSquareElement(square))
+
     currentPlayer = players[0]
+    gameBoard.fill('')
+
     document.body.appendChild(gameBoardElement)
 }
 
